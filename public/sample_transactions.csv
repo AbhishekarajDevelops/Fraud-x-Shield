@@ -1,0 +1,16 @@
+id,amount,date,merchant,location
+TX-1001,125.99,2023-06-15,Amazon,Online
+TX-1002,75.50,2023-06-14,Starbucks,New York NY
+TX-1003,899.99,2023-06-13,Electronics Store,Miami FL
+TX-1004,42.75,2023-06-12,Gas Station,Chicago IL
+TX-1005,1250.00,2023-06-11,Unknown Vendor,International
+TX-1006,6500.00,2023-06-10,Luxury Watches,Online
+TX-1007,350.25,2023-06-09,Department Store,Los Angeles CA
+TX-1008,125.00,2023-06-08,Restaurant,San Francisco CA
+TX-1009,2100.00,2023-06-07,Foreign Electronics,International
+TX-1010,85.50,2023-06-06,Grocery Store,Boston MA
+TX-1011,450.00,2023-06-05,Clothing Store,Chicago IL
+TX-1012,5200.00,2023-06-04,Unverified Merchant,Unknown Location
+TX-1013,65.75,2023-06-03,Coffee Shop,Seattle WA
+TX-1014,950.00,2023-06-02,Furniture Store,Denver CO
+TX-1015,8500.00,2023-06-01,International Jewelry,Foreign
