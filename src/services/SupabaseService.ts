@@ -98,7 +98,7 @@ export class SupabaseService {
       type: "signup",
       email,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}/`,
       },
     });
 
@@ -132,7 +132,7 @@ export class SupabaseService {
         data: {
           name,
         },
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}/`,
       },
     });
 

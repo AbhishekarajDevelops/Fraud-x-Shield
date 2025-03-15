@@ -7,6 +7,10 @@ import { useAuth } from "./contexts/AuthContext";
 
 // Lazy load components for better performance
 const Dashboard = lazy(() => import("./components/dashboard/Dashboard"));
+const ResetPasswordForm = lazy(
+  () => import("./components/auth/ResetPasswordForm"),
+);
+const AuthCallback = lazy(() => import("./components/auth/AuthCallback"));
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -22,6 +26,12 @@ function App() {
       <>
         <Routes>
           <Route path="/" element={<Home />} />
+
+          {/* Auth callback route for handling email confirmations */}
+          <Route path="/auth/callback" element={<AuthCallback />} />
+
+          {/* Reset password route */}
+          <Route path="/reset-password" element={<ResetPasswordForm />} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
