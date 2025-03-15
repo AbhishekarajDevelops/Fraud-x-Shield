@@ -106,7 +106,7 @@ const MLModelInfo = ({
             <h3 className="text-sm font-medium text-gray-500 mb-1">
               Last Trained
             </h3>
-            <p className="text-lg font-medium">{modelStats.lastTrained}</p>
+            <p className="text-lg font-medium">{stats.lastTrained}</p>
           </div>
 
           <div>
@@ -114,9 +114,9 @@ const MLModelInfo = ({
               Training Samples
             </h3>
             <p className="text-lg font-medium">
-              {modelStats.totalSamples?.toLocaleString()}
+              {stats.totalSamples.toLocaleString()}
               <span className="text-xs text-red-600 ml-2">
-                ({modelStats.fraudSamples?.toLocaleString()} fraud cases)
+                ({stats.fraudSamples.toLocaleString()} fraud cases)
               </span>
             </p>
           </div>
@@ -139,7 +139,7 @@ const MLModelInfo = ({
               </CardHeader>
               <CardContent className="p-4 pt-0">
                 <p className="text-2xl font-bold text-indigo-600">
-                  {(modelStats.accuracy * 100).toFixed(2)}%
+                  {(stats.accuracy * 100).toFixed(2)}%
                 </p>
               </CardContent>
             </Card>
@@ -152,7 +152,7 @@ const MLModelInfo = ({
               </CardHeader>
               <CardContent className="p-4 pt-0">
                 <p className="text-2xl font-bold text-indigo-600">
-                  {(modelStats.precision * 100).toFixed(2)}%
+                  {(stats.precision * 100).toFixed(2)}%
                 </p>
               </CardContent>
             </Card>
@@ -165,7 +165,7 @@ const MLModelInfo = ({
               </CardHeader>
               <CardContent className="p-4 pt-0">
                 <p className="text-2xl font-bold text-indigo-600">
-                  {(modelStats.recall * 100).toFixed(2)}%
+                  {(stats.recall * 100).toFixed(2)}%
                 </p>
               </CardContent>
             </Card>
@@ -178,7 +178,7 @@ const MLModelInfo = ({
               </CardHeader>
               <CardContent className="p-4 pt-0">
                 <p className="text-2xl font-bold text-indigo-600">
-                  {(modelStats.f1Score * 100).toFixed(2)}%
+                  {(stats.f1Score * 100).toFixed(2)}%
                 </p>
               </CardContent>
             </Card>
