@@ -68,6 +68,8 @@ const LoginForm = ({
     } else {
       setForgotPasswordEmail(emailValue);
     }
+    // Navigate to forgot password page
+    window.location.href = "/forgot-password";
   };
 
   return (

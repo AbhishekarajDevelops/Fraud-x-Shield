@@ -10,6 +10,9 @@ const Dashboard = lazy(() => import("./components/dashboard/Dashboard"));
 const ResetPasswordForm = lazy(
   () => import("./components/auth/ResetPasswordForm"),
 );
+const ForgotPasswordForm = lazy(
+  () => import("./components/auth/ForgotPasswordForm"),
+);
 const AuthCallback = lazy(() => import("./components/auth/AuthCallback"));
 
 function App() {
@@ -30,8 +33,9 @@ function App() {
           {/* Auth callback route for handling email confirmations */}
           <Route path="/auth/callback" element={<AuthCallback />} />
 
-          {/* Reset password route */}
+          {/* Password reset routes */}
           <Route path="/reset-password" element={<ResetPasswordForm />} />
+          <Route path="/forgot-password" element={<ForgotPasswordForm />} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>

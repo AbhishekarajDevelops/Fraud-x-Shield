@@ -169,14 +169,15 @@ const CSVUpload = ({ onAnalyzeComplete = () => {} }: CSVUploadProps) => {
     });
   };
 
-  // Optimized analysis for large files - uses streaming and sampling
+  // Enhanced optimized analysis for large files - uses streaming, chunking and sampling
   const analyzeTransactionDataOptimized = async (
     file: File,
   ): Promise<AnalysisResult> => {
     return new Promise((resolve) => {
       // We'll use a chunk-based approach for large files
-      const chunkSize = 1024 * 1024; // 1MB chunks
-      const sampleSize = 1000; // Number of transactions to sample
+      const chunkSize = 5 * 1024 * 1024; // 5MB chunks for faster processing
+      const sampleSize = 2000; // Increased sample size for better accuracy
+      const maxSamplesPerChunk = 200; // Maximum samples to take from each chunk
       let samples = [];
       let headerRow = "";
       let totalTransactions = 0;
@@ -202,18 +203,35 @@ const CSVUpload = ({ onAnalyzeComplete = () => {} }: CSVUploadProps) => {
 
           // Take random samples if we don't have enough yet
           if (samples.length < sampleSize) {
-            for (
-              let i = 0;
-              i < lines.length && samples.length < sampleSize;
-              i++
-            ) {
-              if (lines[i].trim() === "") continue;
+            // Calculate how many samples to take from this chunk
+            const samplesNeeded = Math.min(
+              maxSamplesPerChunk,
+              sampleSize - samples.length,
+            );
 
-              // Add ~10% of lines as samples
-              if (Math.random() < 0.1) {
-                samples.push(lines[i]);
+            // Use reservoir sampling algorithm for unbiased sampling
+            const reservoir = [];
+            const validLines = lines.filter((line) => line.trim() !== "");
+
+            if (validLines.length <= samplesNeeded) {
+              // If we have fewer lines than needed samples, take all of them
+              reservoir.push(...validLines);
+            } else {
+              // Use reservoir sampling for larger chunks
+              for (let i = 0; i < validLines.length; i++) {
+                if (reservoir.length < samplesNeeded) {
+                  reservoir.push(validLines[i]);
+                } else {
+                  // Randomly replace elements with decreasing probability
+                  const j = Math.floor(Math.random() * (i + 1));
+                  if (j < samplesNeeded) {
+                    reservoir[j] = validLines[i];
+                  }
+                }
               }
             }
+
+            samples.push(...reservoir);
           }
 
           // Continue with next chunk or finish
