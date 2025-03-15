@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { Alert, AlertDescription } from "../../components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -28,6 +28,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 interface LoginFormProps {
   onSubmit?: (values: LoginFormValues) => void;
   onRegisterClick?: () => void;
+  onForgotPassword?: (email: string) => void;
   isLoading?: boolean;
   error?: string | null;
 }
@@ -35,12 +36,16 @@ interface LoginFormProps {
 const LoginForm = ({
   onSubmit = () => {},
   onRegisterClick = () => {},
+  onForgotPassword = () => {},
   isLoading = false,
   error = null,
 }: LoginFormProps) => {
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -50,8 +55,19 @@ const LoginForm = ({
     },
   });
 
+  // Watch the email field for forgot password functionality
+  const emailValue = watch("email");
+
   const submitHandler = (data: LoginFormValues) => {
     onSubmit(data);
+  };
+
+  const handleForgotPassword = () => {
+    if (emailValue && !errors.email) {
+      onForgotPassword(emailValue);
+    } else {
+      setForgotPasswordEmail(emailValue);
+    }
   };
 
   return (
@@ -79,6 +95,7 @@ const LoginForm = ({
               placeholder="name@example.com"
               {...register("email")}
               className={errors.email ? "border-red-500" : ""}
+              disabled={isLoading}
             />
             {errors.email && (
               <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -92,6 +109,8 @@ const LoginForm = ({
                 variant="link"
                 className="p-0 h-auto text-sm"
                 type="button"
+                onClick={handleForgotPassword}
+                disabled={isLoading}
               >
                 Forgot password?
               </Button>
@@ -102,6 +121,7 @@ const LoginForm = ({
               placeholder="••••••••"
               {...register("password")}
               className={errors.password ? "border-red-500" : ""}
+              disabled={isLoading}
             />
             {errors.password && (
               <p className="text-sm text-red-500">{errors.password.message}</p>
@@ -109,7 +129,14 @@ const LoginForm = ({
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Sign in"}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              "Sign in"
+            )}
           </Button>
         </form>
       </CardContent>
@@ -120,6 +147,7 @@ const LoginForm = ({
             variant="link"
             className="p-0 h-auto"
             onClick={onRegisterClick}
+            disabled={isLoading}
           >
             Register
           </Button>

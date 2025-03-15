@@ -20,16 +20,18 @@ import {
   Info,
 } from "lucide-react";
 
+export interface MLModelStats {
+  accuracy: number;
+  precision: number;
+  recall: number;
+  f1Score: number;
+  lastTrained: string;
+  totalSamples: number;
+  fraudSamples: number;
+}
+
 interface MLModelInfoProps {
-  modelStats?: {
-    accuracy?: number;
-    precision?: number;
-    recall?: number;
-    f1Score?: number;
-    lastTrained?: string;
-    totalSamples?: number;
-    fraudSamples?: number;
-  };
+  modelStats?: Partial<MLModelStats>;
   onTrainModel?: () => void;
   onDownloadModel?: () => void;
 }
@@ -39,7 +41,7 @@ const MLModelInfo = ({
   onTrainModel = () => console.log("Train model clicked"),
   onDownloadModel = () => console.log("Download model clicked"),
 }: MLModelInfoProps) => {
-  const [stats, setStats] = React.useState({
+  const [stats, setStats] = React.useState<MLModelStats>({
     accuracy: 0.9876,
     precision: 0.9532,
     recall: 0.8721,
@@ -52,7 +54,7 @@ const MLModelInfo = ({
   React.useEffect(() => {
     // If modelStats are provided as props, use them
     if (modelStats) {
-      setStats(modelStats);
+      setStats((prev) => ({ ...prev, ...modelStats }));
       return;
     }
 
@@ -63,7 +65,7 @@ const MLModelInfo = ({
         const { getMLModelStats } = useMLModel();
         const apiStats = await getMLModelStats();
         if (apiStats) {
-          setStats(apiStats);
+          setStats((prev) => ({ ...prev, ...apiStats }));
         }
       } catch (error) {
         console.error("Error fetching ML model stats:", error);
@@ -72,6 +74,7 @@ const MLModelInfo = ({
 
     fetchStats();
   }, [modelStats]);
+
   return (
     <Card className="w-full max-w-2xl mx-auto bg-white shadow-lg">
       <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
