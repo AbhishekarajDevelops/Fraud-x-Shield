@@ -29,6 +29,7 @@ interface LoginFormProps {
   onSubmit?: (values: LoginFormValues) => void;
   onRegisterClick?: () => void;
   onForgotPassword?: (email: string) => void;
+  onToggleView?: () => void;
   isLoading?: boolean;
   error?: string | null;
 }
@@ -37,6 +38,7 @@ const LoginForm = ({
   onSubmit = () => {},
   onRegisterClick = () => {},
   onForgotPassword = () => {},
+  onToggleView = () => {},
   isLoading = false,
   error = null,
 }: LoginFormProps) => {
@@ -167,7 +169,7 @@ const LoginForm = ({
           <Button
             variant="link"
             className="p-0 h-auto text-primary"
-            onClick={onRegisterClick}
+            onClick={onToggleView || onRegisterClick}
             disabled={isLoading}
           >
             Register

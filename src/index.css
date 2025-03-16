@@ -97,10 +97,68 @@
   }
 
   .gradient-bg {
-    @apply bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900;
+    background: linear-gradient(-45deg, #1e3a8a, #3730a3, #312e81, #1e40af);
+    background-size: 400% 400%;
+    animation: gradient-animation 15s ease infinite;
   }
 
   .dark .gradient-bg {
-    @apply bg-gradient-to-br from-blue-950 via-indigo-950 to-purple-950;
+    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #172554, #1e1b4b);
+    background-size: 400% 400%;
+    animation: gradient-animation 15s ease infinite;
+  }
+
+  @keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Button hover effects */
+  .btn-hover-effect {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .btn-hover-effect:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .btn-hover-effect:hover:after {
+    transform: translateX(0);
+  }
+
+  /* Card hover effects */
+  .card-hover {
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Animated background for special elements */
+  .animated-bg {
+    background: linear-gradient(-45deg, #4f46e5, #3b82f6, #8b5cf6, #3b82f6);
+    background-size: 400% 400%;
+    animation: gradient-animation 5s ease infinite;
   }
 }

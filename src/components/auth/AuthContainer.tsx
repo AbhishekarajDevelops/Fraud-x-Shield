@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { supabaseService } from "@/services/SupabaseService";
+import { CheckCircle, Send, ArrowLeft } from "lucide-react";
 
 interface AuthContainerProps {
   onLogin?: (values: { email: string; password: string }) => void;
@@ -31,6 +32,7 @@ const AuthContainer = ({
   const [view, setView] = useState<"login" | "register">(initialView);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
+  const [resendSuccess, setResendSuccess] = useState(false);
   const {
     login,
     register,
@@ -80,7 +82,8 @@ const AuthContainer = ({
 
     try {
       await supabaseService.resendConfirmationEmail(registeredEmail);
-      // Show a success message or update UI
+      setResendSuccess(true);
+      setTimeout(() => setResendSuccess(false), 3000);
     } catch (error) {
       console.error("Error resending confirmation email:", error);
     }
@@ -98,12 +101,29 @@ const AuthContainer = ({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
         >
-          <Card className="w-full p-6">
-            <h2 className="text-2xl font-bold text-center mb-6">
+          <Card className="w-full p-8 shadow-lg border-t-4 border-t-green-500">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+              className="flex justify-center mb-6"
+            >
+              <div className="bg-green-100 p-4 rounded-full">
+                <CheckCircle className="h-12 w-12 text-green-600" />
+              </div>
+            </motion.div>
+
+            <motion.h2
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-2xl font-bold text-center mb-6"
+            >
               Registration Successful
-            </h2>
+            </motion.h2>
+
             <Alert className="mb-6 bg-green-50 border-green-200">
               <AlertDescription>
                 We've sent a confirmation email to{" "}
@@ -111,17 +131,46 @@ const AuthContainer = ({
                 click the confirmation link to activate your account.
               </AlertDescription>
             </Alert>
+
             <div className="space-y-4">
-              <Button
-                onClick={handleResendConfirmation}
-                variant="outline"
-                className="w-full"
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Resend Confirmation Email
-              </Button>
-              <Button onClick={toggleView} className="w-full">
-                Return to Login
-              </Button>
+                <Button
+                  onClick={handleResendConfirmation}
+                  variant="outline"
+                  className="w-full relative overflow-hidden group"
+                  disabled={resendSuccess}
+                >
+                  <span className="flex items-center gap-2">
+                    <Send className="h-4 w-4" />
+                    {resendSuccess
+                      ? "Email Sent!"
+                      : "Resend Confirmation Email"}
+                  </span>
+                  {resendSuccess && (
+                    <motion.span
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      className="absolute inset-0 bg-green-100 -z-10"
+                    />
+                  )}
+                </Button>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button
+                  onClick={toggleView}
+                  className="w-full flex items-center gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Return to Login
+                </Button>
+              </motion.div>
             </div>
           </Card>
         </motion.div>
@@ -164,12 +213,6 @@ const AuthContainer = ({
           </motion.div>
         )}
       </AnimatePresence>
-
-      <div className="mt-6 text-center">
-        <p className="text-sm text-muted-foreground">
-          Secure authentication for Credit Card Fraud Detection System
-        </p>
-      </div>
     </div>
   );
 };

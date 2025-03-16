@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import ActionCards from "./ActionCards";
 import TransactionForm from "../transactions/TransactionForm";
 import TransactionResult from "../transactions/TransactionResult";
@@ -68,6 +71,19 @@ const Dashboard = () => {
 
   const [csvAnalysisResults, setCsvAnalysisResults] =
     useState<AnalysisResult | null>(null);
+
+  // Animation variants
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+  };
+
+  const pageTransition = {
+    type: "tween",
+    ease: "easeInOut",
+    duration: 0.3,
+  };
 
   // Handle transaction form submission
   const handleTransactionSubmit = async (values: z.infer<any>) => {
@@ -195,164 +211,199 @@ const Dashboard = () => {
     setCurrentView("detail");
   };
 
+  const BackButton = ({ onClick }: { onClick: () => void }) => (
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="inline-block"
+    >
+      <Button
+        onClick={onClick}
+        variant="ghost"
+        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-4"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Dashboard
+      </Button>
+    </motion.div>
+  );
+
   return (
-    <div className="w-full min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="w-full min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {currentView === "home" && (
-          <div className="space-y-8">
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome to Fraud Detection
-              </h1>
-              <p className="text-gray-600">
-                Check your transactions for potential fraud or view your
-                transaction history.
-              </p>
-            </div>
-
-            <ActionCards
-              onCheckTransaction={() => setCurrentView("check")}
-              onViewHistory={() => setCurrentView("history")}
-              onUploadCSV={() => setCurrentView("csv-upload")}
-              onViewMLModel={() => setCurrentView("ml-model")}
-            />
-          </div>
-        )}
-
-        {currentView === "check" && (
-          <div className="space-y-4">
-            <button
-              onClick={() => setCurrentView("home")}
-              className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
+        <AnimatePresence mode="wait">
+          {currentView === "home" && (
+            <motion.div
+              key="home"
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="space-y-8"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-1"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+              <motion.div
+                className="bg-white p-8 rounded-xl shadow-md border border-gray-100"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
               >
-                <path
-                  fillRule="evenodd"
-                  d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
-                  clipRule="evenodd"
+                <motion.h1
+                  className="text-3xl font-bold text-gray-900 mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Welcome to Fraud Detection
+                </motion.h1>
+                <motion.p
+                  className="text-gray-600"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  Check your transactions for potential fraud or view your
+                  transaction history.
+                </motion.p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <ActionCards
+                  onCheckTransaction={() => setCurrentView("check")}
+                  onViewHistory={() => setCurrentView("history")}
+                  onUploadCSV={() => setCurrentView("csv-upload")}
+                  onViewMLModel={() => setCurrentView("ml-model")}
                 />
-              </svg>
-              Back to Dashboard
-            </button>
-            <TransactionForm onSubmit={handleTransactionSubmit} />
-          </div>
-        )}
+              </motion.div>
+            </motion.div>
+          )}
 
-        {currentView === "result" && transactionResult && (
-          <div className="space-y-4">
-            <TransactionResult
-              result={transactionResult.result}
-              score={transactionResult.score}
-              transaction={transactionResult.transaction}
-              reasons={transactionResult.reasons}
-              onBack={() => setCurrentView("check")}
-            />
-          </div>
-        )}
-
-        {currentView === "history" && (
-          <div>
-            <button
-              onClick={() => setCurrentView("home")}
-              className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
+          {currentView === "check" && (
+            <motion.div
+              key="check"
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="space-y-4"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-1"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Back to Dashboard
-            </button>
-            <TransactionHistory onViewDetail={handleViewTransactionDetail} />
-          </div>
-        )}
+              <BackButton onClick={() => setCurrentView("home")} />
+              <TransactionForm onSubmit={handleTransactionSubmit} />
+            </motion.div>
+          )}
 
-        {currentView === "detail" && transactionDetail && (
-          <TransactionDetail
-            transaction={transactionDetail}
-            onBack={() => setCurrentView("history")}
-          />
-        )}
-
-        {currentView === "csv-upload" && (
-          <div>
-            <button
-              onClick={() => setCurrentView("home")}
-              className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
+          {currentView === "result" && transactionResult && (
+            <motion.div
+              key="result"
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="space-y-4"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-1"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Back to Dashboard
-            </button>
-            <CSVUpload onAnalyzeComplete={handleCsvAnalysisComplete} />
-          </div>
-        )}
+              <TransactionResult
+                result={transactionResult.result}
+                score={transactionResult.score}
+                transaction={transactionResult.transaction}
+                reasons={transactionResult.reasons}
+                onBack={() => setCurrentView("check")}
+              />
+            </motion.div>
+          )}
 
-        {currentView === "csv-result" && csvAnalysisResults && (
-          <CSVAnalysisResult
-            results={csvAnalysisResults}
-            onBack={() => setCurrentView("csv-upload")}
-          />
-        )}
-
-        {currentView === "ml-model" && (
-          <div>
-            <button
-              onClick={() => setCurrentView("home")}
-              className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
+          {currentView === "history" && (
+            <motion.div
+              key="history"
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-1"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Back to Dashboard
-            </button>
-            <MLModelInfo
-              onTrainModel={() => {
-                // In a real app, this would trigger model training
-                alert(
-                  "Model training would start here. This would typically take several minutes to hours depending on dataset size.",
-                );
-              }}
-              onDownloadModel={() => {
-                // In a real app, this would download the model file
-                alert(
-                  "In a production environment, this would download the trained model file.",
-                );
-              }}
-            />
-          </div>
-        )}
+              <BackButton onClick={() => setCurrentView("home")} />
+              <TransactionHistory onViewDetail={handleViewTransactionDetail} />
+            </motion.div>
+          )}
+
+          {currentView === "detail" && transactionDetail && (
+            <motion.div
+              key="detail"
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <TransactionDetail
+                transaction={transactionDetail}
+                onBack={() => setCurrentView("history")}
+              />
+            </motion.div>
+          )}
+
+          {currentView === "csv-upload" && (
+            <motion.div
+              key="csv-upload"
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <BackButton onClick={() => setCurrentView("home")} />
+              <CSVUpload onAnalyzeComplete={handleCsvAnalysisComplete} />
+            </motion.div>
+          )}
+
+          {currentView === "csv-result" && csvAnalysisResults && (
+            <motion.div
+              key="csv-result"
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <CSVAnalysisResult
+                results={csvAnalysisResults}
+                onBack={() => setCurrentView("csv-upload")}
+              />
+            </motion.div>
+          )}
+
+          {currentView === "ml-model" && (
+            <motion.div
+              key="ml-model"
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <BackButton onClick={() => setCurrentView("home")} />
+              <MLModelInfo
+                onTrainModel={() => {
+                  // In a real app, this would trigger model training
+                  alert(
+                    "Model training would start here. This would typically take several minutes to hours depending on dataset size.",
+                  );
+                }}
+                onDownloadModel={() => {
+                  // In a real app, this would download the model file
+                  alert(
+                    "In a production environment, this would download the trained model file.",
+                  );
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

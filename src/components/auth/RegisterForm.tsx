@@ -36,6 +36,7 @@ type RegisterFormValues = z.infer<typeof registerFormSchema>;
 interface RegisterFormProps {
   onSubmit?: (values: RegisterFormValues) => void;
   onLoginClick?: () => void;
+  onToggleView?: () => void;
   isLoading?: boolean;
   error?: string | null;
 }
@@ -43,6 +44,7 @@ interface RegisterFormProps {
 const RegisterForm = ({
   onSubmit = (values) => console.log(values),
   onLoginClick = () => console.log("Login clicked"),
+  onToggleView = () => {},
   isLoading = false,
   error = null,
 }: RegisterFormProps) => {
@@ -193,7 +195,7 @@ const RegisterForm = ({
               <Button
                 variant="link"
                 type="button"
-                onClick={onLoginClick}
+                onClick={onToggleView || onLoginClick}
                 className="p-0"
                 disabled={isLoading}
               >
