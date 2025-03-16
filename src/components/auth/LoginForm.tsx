@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -12,9 +12,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
-import { Alert, AlertDescription } from "../../components/ui/alert";
-import { AlertCircle, Loader2 } from "lucide-react";
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Loader2, Lock, Mail } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -73,32 +73,42 @@ const LoginForm = ({
   };
 
   return (
-    <Card className="w-full max-w-md bg-white shadow-lg">
+    <Card className="w-full glassmorphism border-0">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
-        <CardDescription className="text-center">
+        <CardTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+          Welcome Back
+        </CardTitle>
+        <CardDescription className="text-center text-foreground/70">
           Enter your credentials to access your account
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
           {error && (
-            <Alert variant="destructive" className="mb-4">
+            <Alert
+              variant="destructive"
+              className="mb-4 bg-destructive/10 text-destructive border-destructive/20"
+            >
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              {...register("email")}
-              className={errors.email ? "border-red-500" : ""}
-              disabled={isLoading}
-            />
+            <Label htmlFor="email" className="text-foreground/80">
+              Email
+            </Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 h-4 w-4 text-foreground/40" />
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                {...register("email")}
+                className={`pl-10 bg-background/50 border-border/50 ${errors.email ? "border-red-500" : ""}`}
+                disabled={isLoading}
+              />
+            </div>
             {errors.email && (
               <p className="text-sm text-red-500">{errors.email.message}</p>
             )}
@@ -106,10 +116,12 @@ const LoginForm = ({
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-foreground/80">
+                Password
+              </Label>
               <Button
                 variant="link"
-                className="p-0 h-auto text-sm"
+                className="p-0 h-auto text-sm text-primary"
                 type="button"
                 onClick={handleForgotPassword}
                 disabled={isLoading}
@@ -117,20 +129,27 @@ const LoginForm = ({
                 Forgot password?
               </Button>
             </div>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              {...register("password")}
-              className={errors.password ? "border-red-500" : ""}
-              disabled={isLoading}
-            />
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 h-4 w-4 text-foreground/40" />
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                {...register("password")}
+                className={`pl-10 bg-background/50 border-border/50 ${errors.password ? "border-red-500" : ""}`}
+                disabled={isLoading}
+              />
+            </div>
             {errors.password && (
               <p className="text-sm text-red-500">{errors.password.message}</p>
             )}
           </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -143,11 +162,11 @@ const LoginForm = ({
         </form>
       </CardContent>
       <CardFooter className="flex justify-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-foreground/70">
           Don't have an account?{" "}
           <Button
             variant="link"
-            className="p-0 h-auto"
+            className="p-0 h-auto text-primary"
             onClick={onRegisterClick}
             disabled={isLoading}
           >

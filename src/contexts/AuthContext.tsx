@@ -28,24 +28,33 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}
+};
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [autoLoginEnabled] = useState<boolean>(false); // Disable auto-login by default
 
   useEffect(() => {
+    // Clear any existing session on component mount
+    const clearExistingSession = async () => {
+      if (!autoLoginEnabled) {
+        await supabase.auth.signOut();
+      }
+    };
+    clearExistingSession();
+
     // Set up auth state change listener
     const {
       data: { subscription },
@@ -81,8 +90,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(false);
     });
 
-    // Check for existing session on load
+    // Check for existing session on load (only if auto-login is enabled)
     const checkSession = async () => {
+      if (!autoLoginEnabled) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const { data } = await supabase.auth.getSession();
 
@@ -189,4 +203,4 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+};
