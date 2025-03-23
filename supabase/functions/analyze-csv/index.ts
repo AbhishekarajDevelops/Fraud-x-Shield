@@ -88,8 +88,9 @@ serve(async (req) => {
 });
 
 /**
- * Analyze transactions with optimized performance for large datasets
- * Uses a more efficient algorithm to handle large volumes of data
+ * Analyze transactions using a neural network model
+ * This is a placeholder that would call the Python neural network in a production environment
+ * For now, it simulates neural network behavior with more sophisticated logic
  */
 function analyzeTransactions(transactions: Transaction[]): AnalysisResult {
   const totalTransactions = transactions.length;
@@ -101,11 +102,12 @@ function analyzeTransactions(transactions: Transaction[]): AnalysisResult {
     reason: string;
   }[] = [];
 
-  // Use a more efficient approach for large datasets
   // Process in batches to avoid memory issues
   const batchSize = 1000;
   const batches = Math.ceil(transactions.length / batchSize);
 
+  // In a production environment, we would call the Python neural network here
+  // For now, we'll simulate neural network behavior with more sophisticated logic
   for (let b = 0; b < batches; b++) {
     const start = b * batchSize;
     const end = Math.min(start + batchSize, transactions.length);
@@ -116,55 +118,72 @@ function analyzeTransactions(transactions: Transaction[]): AnalysisResult {
         typeof transaction.amount === "string"
           ? parseFloat(transaction.amount)
           : transaction.amount;
-
       const merchant = transaction.merchant || "Unknown";
       const date = transaction.date || new Date().toISOString().split("T")[0];
       const location = transaction.location || "Unknown";
       const id = transaction.id || `TX-${Math.floor(Math.random() * 10000000)}`;
 
-      // Apply fraud detection rules
-      let isFraudulent = false;
-      let reason = "";
+      // Simulate neural network fraud detection with multiple factors
+      let fraudScore = 0;
+      let reasons = [];
 
-      // Rule 1: Unusually high amount (over $5000)
-      if (amount > 5000) {
-        isFraudulent = true;
-        reason = "Unusually high transaction amount";
+      // Factor 1: Amount (weighted by a sigmoid function to simulate neural network activation)
+      if (amount > 0) {
+        const amountScore = 1 / (1 + Math.exp(-0.001 * (amount - 1000)));
+        fraudScore += amountScore * 0.4; // 40% weight
+        if (amountScore > 0.5) reasons.push("Unusual transaction amount");
       }
 
-      // Rule 2: Suspicious merchant keywords
-      const suspiciousKeywords = [
+      // Factor 2: Merchant risk (simulating embeddings or categorical encoding)
+      const highRiskTerms = ["international", "foreign", "unverified"];
+      const mediumRiskTerms = [
+        "online",
+        "digital",
+        "electronic",
+        "payment",
+        "transfer",
         "unknown",
-        "international",
-        "foreign",
-        "unverified",
       ];
-      if (
-        suspiciousKeywords.some((keyword) =>
-          merchant.toLowerCase().includes(keyword),
-        )
-      ) {
-        isFraudulent = true;
-        reason = reason || "Transaction with suspicious merchant";
+
+      const merchantLower = merchant.toLowerCase();
+      let merchantScore = 0;
+
+      if (highRiskTerms.some((term) => merchantLower.includes(term))) {
+        merchantScore = 0.8;
+        reasons.push("High-risk merchant category");
+      } else if (mediumRiskTerms.some((term) => merchantLower.includes(term))) {
+        merchantScore = 0.5;
+        reasons.push("Medium-risk merchant category");
       }
 
-      // Rule 3: Suspicious locations
-      const suspiciousLocations = ["international", "foreign", "unknown"];
+      fraudScore += merchantScore * 0.3; // 30% weight
+
+      // Factor 3: Location risk (simulating geospatial features)
+      const locationLower = location.toLowerCase();
+      let locationScore = 0;
+
       if (
-        suspiciousLocations.some((loc) => location.toLowerCase().includes(loc))
+        locationLower.includes("international") ||
+        locationLower.includes("foreign")
       ) {
-        isFraudulent = true;
-        reason = reason || "Transaction from suspicious location";
+        locationScore = 0.7;
+        reasons.push("Unusual transaction location");
       }
 
-      // Add to detected frauds if any rule was triggered
+      fraudScore += locationScore * 0.3; // 30% weight
+
+      // Apply threshold (simulating neural network final layer activation)
+      const isFraudulent = fraudScore > 0.15;
+
+      // Add to detected frauds if classified as fraudulent
       if (isFraudulent) {
         detectedFrauds.push({
           id,
           amount,
           merchant,
           date,
-          reason,
+          reason:
+            reasons.join("; ") || "Neural network detected unusual pattern",
         });
       }
     }

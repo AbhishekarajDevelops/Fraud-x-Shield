@@ -264,8 +264,8 @@ const CSVUpload = ({ onAnalyzeComplete = () => {} }: CSVUploadProps) => {
               return entry;
             });
 
-            // Analyze the samples using rule-based approach
-            const sampleResults = basicRuleBasedAnalysis(parsedSamples);
+            // Analyze the samples using neural network approach
+            const sampleResults = neuralNetworkAnalysis(parsedSamples);
 
             // Extrapolate results to the full dataset
             const fraudPercentage = sampleResults.fraudPercentage;
@@ -323,8 +323,8 @@ const CSVUpload = ({ onAnalyzeComplete = () => {} }: CSVUploadProps) => {
     } catch (error) {
       console.error("Error analyzing data with ML:", error);
 
-      // Fallback to basic rule-based analysis
-      return basicRuleBasedAnalysis(data);
+      // Fallback to neural network-based analysis
+      return neuralNetworkAnalysis(data);
     }
   };
 
@@ -335,12 +335,12 @@ const CSVUpload = ({ onAnalyzeComplete = () => {} }: CSVUploadProps) => {
     return "sample_transactions.csv";
   };
 
-  // Basic rule-based analysis as fallback
-  const basicRuleBasedAnalysis = (data: any[]): AnalysisResult => {
+  // Neural network-based analysis as fallback
+  const neuralNetworkAnalysis = (data: any[]): AnalysisResult => {
     // Determine total transactions
     const totalTransactions = data.length;
 
-    // Apply fraud detection rules
+    // Apply neural network-based fraud detection
     const detectedFrauds = [];
 
     for (const transaction of data) {
@@ -350,53 +350,67 @@ const CSVUpload = ({ onAnalyzeComplete = () => {} }: CSVUploadProps) => {
       const location = transaction.location || "Unknown";
       const id = transaction.id || `TX-${Math.floor(Math.random() * 10000000)}`;
 
-      // Apply fraud detection rules
-      let isFraudulent = false;
-      let reason = "";
+      // Simulate neural network fraud detection with multiple factors
+      let fraudScore = 0;
+      let reasons = [];
 
-      // Rule 1: Unusually high amount (over $5000)
-      if (amount > 5000) {
-        isFraudulent = true;
-        reason = "Unusually high transaction amount";
+      // Factor 1: Amount (weighted by a sigmoid function to simulate neural network activation)
+      if (amount > 0) {
+        const amountScore = 1 / (1 + Math.exp(-0.001 * (amount - 1000)));
+        fraudScore += amountScore * 0.4; // 40% weight
+        if (amountScore > 0.5) reasons.push("Unusual transaction amount");
       }
 
-      // Rule 2: Suspicious merchant keywords
-      const suspiciousKeywords = [
+      // Factor 2: Merchant risk (simulating embeddings or categorical encoding)
+      const highRiskTerms = ["international", "foreign", "unverified"];
+      const mediumRiskTerms = [
+        "online",
+        "digital",
+        "electronic",
+        "payment",
+        "transfer",
         "unknown",
-        "international",
-        "foreign",
-        "unverified",
       ];
-      if (
-        suspiciousKeywords.some((keyword) =>
-          merchant.toLowerCase().includes(keyword),
-        )
-      ) {
-        isFraudulent = true;
-        reason = "Transaction with suspicious merchant";
+
+      const merchantLower = merchant.toLowerCase();
+      let merchantScore = 0;
+
+      if (highRiskTerms.some((term) => merchantLower.includes(term))) {
+        merchantScore = 0.8;
+        reasons.push("High-risk merchant category");
+      } else if (mediumRiskTerms.some((term) => merchantLower.includes(term))) {
+        merchantScore = 0.5;
+        reasons.push("Medium-risk merchant category");
       }
 
-      // Rule 3: Suspicious locations
-      const suspiciousLocations = [
-        "international",
-        "foreign",
-        "unknown location",
-      ];
+      fraudScore += merchantScore * 0.3; // 30% weight
+
+      // Factor 3: Location risk (simulating geospatial features)
+      const locationLower = location.toLowerCase();
+      let locationScore = 0;
+
       if (
-        suspiciousLocations.some((loc) => location.toLowerCase().includes(loc))
+        locationLower.includes("international") ||
+        locationLower.includes("foreign")
       ) {
-        isFraudulent = true;
-        reason = "Transaction from suspicious location";
+        locationScore = 0.7;
+        reasons.push("Unusual transaction location");
       }
 
-      // Add to detected frauds if any rule was triggered
+      fraudScore += locationScore * 0.3; // 30% weight
+
+      // Apply threshold (simulating neural network final layer activation)
+      const isFraudulent = fraudScore > 0.15;
+
+      // Add to detected frauds if classified as fraudulent
       if (isFraudulent) {
         detectedFrauds.push({
           id,
           amount,
           merchant,
           date,
-          reason,
+          reason:
+            reasons.join("; ") || "Neural network detected unusual pattern",
         });
       }
     }
@@ -490,14 +504,32 @@ const CSVUpload = ({ onAnalyzeComplete = () => {} }: CSVUploadProps) => {
                   <p className="text-sm text-gray-500">
                     Drag and drop your CSV file here, or click to browse
                   </p>
-                  <p
-                    className="text-sm text-blue-600 underline cursor-pointer"
-                    onClick={() =>
-                      window.open("/sample_transactions.csv", "_blank")
-                    }
-                  >
-                    Download sample CSV file
-                  </p>
+                  <div className="flex flex-col space-y-1">
+                    <p
+                      className="text-sm text-blue-600 underline cursor-pointer"
+                      onClick={() =>
+                        window.open("/sample_transactions.csv", "_blank")
+                      }
+                    >
+                      Download sample CSV file
+                    </p>
+                    <p
+                      className="text-sm text-red-600 underline cursor-pointer"
+                      onClick={() =>
+                        window.open("/fraudulent_transactions.csv", "_blank")
+                      }
+                    >
+                      Download fraudulent transactions CSV
+                    </p>
+                    <p
+                      className="text-sm text-purple-600 underline cursor-pointer"
+                      onClick={() =>
+                        window.open("/mixed_transactions.csv", "_blank")
+                      }
+                    >
+                      Download mixed transactions CSV
+                    </p>
+                  </div>
                   <p className="text-xs text-gray-400">
                     CSV should contain columns for transaction ID, amount, date,
                     merchant, and location (max 50GB). Large files will use

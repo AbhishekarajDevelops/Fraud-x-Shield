@@ -1,0 +1,21 @@
+id,amount,date,merchant,location
+TX-2001,7500,2023-06-15,International Electronics,Foreign Country
+TX-2002,120,2023-06-16,Local Grocery Store,Local
+TX-2003,4800,2023-06-17,Foreign Trading Company,Unknown
+TX-2004,85,2023-06-18,Coffee Shop,Local
+TX-2005,3500,2023-06-19,Online Payment Platform,Local
+TX-2006,45,2023-06-20,Gas Station,Local
+TX-2007,8700,2023-06-21,Unknown Vendor,International
+TX-2008,65,2023-06-22,Restaurant,Local
+TX-2009,6800,2023-06-23,Foreign Exchange Service,Foreign Country
+TX-2010,110,2023-06-24,Department Store,Local
+TX-2011,7200,2023-06-25,International Shipping,Foreign Country
+TX-2012,95,2023-06-26,Pharmacy,Local
+TX-2013,3800,2023-06-27,Foreign Retail Chain,International
+TX-2014,150,2023-06-28,Bookstore,Local
+TX-2015,4100,2023-06-29,Online Electronics Store,Local
+TX-2016,75,2023-06-30,Local Bakery,Local
+TX-2017,8200,2023-07-01,Unverified Digital Service,International
+TX-2018,130,2023-07-02,Clothing Store,Local
+TX-2019,5900,2023-07-03,Electronic Transfer Service,Local
+TX-2020,90,2023-07-04,Supermarket,Local
